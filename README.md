@@ -6,4 +6,4 @@
 - clean + document code
 
 ## Showcase
-https://codepen.io/Fulanko/pen/ErLrNq
+https://codepen.io/Fulanko/full/ErLrNq
