@@ -20,7 +20,7 @@ const camera =
         FAR
     );
 
-var controls = new THREE.OrbitControls(camera);
+var controls = new THREE.OrbitControls(camera, container);
 camera.position.set(0, 0, -100);
 controls.update();
 
@@ -49,9 +49,11 @@ pointLight.position.z = 130;
 scene.add(pointLight);
 
 var Settings = function() {
-  this.pushIterations = 3;
-  this.steps = 5;
+  this.maxDisplacement = 2;
+  this.difficulty = 50;
+  this.steps = 1;
   this.thickness = 3;
+  this.seed = "seed";
 };
 
 var track, line;
@@ -61,7 +63,7 @@ function updateSettings(s) {
   camera.position.set(0, 0, -100);
   scene.remove(line);
   scene.remove(track);
-  trackGen = new TrackGenerator(100, 100, s.pushIterations, s.steps, s.thickness);
+  trackGen = new TrackGenerator(100, 100, s.maxDisplacement, s.steps, s.thickness, s.difficulty, s.seed);
   line = trackGen.drawLine();
   scene.add(line);
   track = trackGen.generateMesh();
@@ -72,15 +74,16 @@ function updateSettings(s) {
 window.onload = function() {
   var s = new Settings();
   // generate track
-  trackGen = new TrackGenerator(100, 100, s.pushIterations, s.steps, s.thickness);
+  trackGen = new TrackGenerator(100, 100, s.maxDisplacement, s.steps, s.thickness, s.difficulty, s.seed);
   line = trackGen.drawLine();
   scene.add(line);
   track = trackGen.generateMesh();
   scene.add(track);
   renderer.render(scene, camera);
   var gui = new dat.GUI();
-  gui.add(s, 'pushIterations').min(1).max(10).step(1).onChange(function() {updateSettings(s);});
-  gui.add(s, 'steps').min(1).max(10).step(1).onChange(function() {updateSettings(s);});
+  gui.add(s, 'seed').onChange(function() {updateSettings(s);});
+  gui.add(s, 'difficulty').min(1).max(100).step(1).onChange(function() {updateSettings(s);});
+  gui.add(s, 'maxDisplacement').min(0).max(100).step(1).onChange(function() {updateSettings(s);});
   gui.add(s, 'thickness').min(1).max(10).step(1).onChange(function() {updateSettings(s);});
 }
 

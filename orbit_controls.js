@@ -925,7 +925,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
 	scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
 
-	window.addEventListener( 'keydown', onKeyDown, false );
+	//window.addEventListener( 'keydown', onKeyDown, false );
 
 	// force an update at start
 

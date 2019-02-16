@@ -1,14 +1,16 @@
 class TrackGenerator {
 
-  constructor(width, height, pushIterations, steps, thickness) {
+  constructor(width, height, maxDisplacement, steps, thickness, difficulty, seed) {
     this.width = width;
     this.height = height;
+    this.seed = seed;
+    this.random = new Math.seedrandom(this.seed);
     this.points = [];
     this.hull = [];
-    this.pushIterations = pushIterations;
+    this.pushIterations = 3;
     this.minDistance = 15;
-    this.difficulty = 0.8;
-    this.maxDisplacement = 2;
+    this.difficulty = difficulty;
+    this.maxDisplacement = maxDisplacement;
     this.angle = 100;
     this.isLooping = true;
     this.steps = steps;
@@ -23,13 +25,14 @@ class TrackGenerator {
 			this.fixAngles();
 			this.pushApart();
 		}
+    this.normalizeSize();
   }
 
   generatePoints() {
     var pointCount = 20;
   	for (var i = 0; i < pointCount; i++) {
-      var x = (Math.random() - 0.5) * this.width;
-      var y = (Math.random() - 0.5) * this.height;
+      var x = (this.random() - 0.5) * this.width;
+      var y = (this.random() - 0.5) * this.height;
       this.points.push([x, y]);
   	}
   }
@@ -58,13 +61,30 @@ class TrackGenerator {
 		}
 	}
 
+  normalizeSize() {
+    var maxX = 0;
+		var maxY = 0;
+		for (var i = 0; i < this.hull.length; i++) {
+			if (Math.abs(this.hull[i][0]) > maxX) {
+				maxX = Math.abs(this.hull[i][0]);
+			}
+			if (Math.abs(this.hull[i][1]) > maxY) {
+				maxY = Math.abs(this.hull[i][1]);
+			}
+		}
+		for (var i = 0; i < this.hull.length; i++) {
+      this.hull[i][0] = (this.hull[i][0] / maxX) * this.width / 2;
+      this.hull[i][1] = (this.hull[i][1] / maxY) * this.height / 2;
+		}
+  }
+
   displace() {
     var newHull = [];
     var disp;
 		for (var i = 0; i < this.hull.length; i++) {
-      var dispLen = Math.pow(Math.random(1), this.difficulty) * this.maxDisplacement;
+      var dispLen = Math.pow(this.random(), this.difficulty) * this.maxDisplacement;
 			disp = [0, 1];
-      disp = this.rotateVector(disp, Math.random() * 360);
+      disp = this.rotateVector(disp, this.random() * 360);
 			disp = [dispLen * disp[0], dispLen * disp[1]];
       newHull.push(this.hull[i]);
       var point = this.hull[i];
